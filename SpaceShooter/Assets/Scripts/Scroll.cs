@@ -14,9 +14,9 @@ public class Scroll : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        float offset = Time.time * scrollSpeed;
+        float offset = Time.fixedTime * scrollSpeed;
         rend.material.SetTextureOffset("_MainTex", new Vector2(0, offset));
     }
 }

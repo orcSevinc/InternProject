@@ -1,56 +1,72 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 using System.Collections;
+using UnityEngine;
+
 
 public class DestroyByContact : MonoBehaviour
 {
     public int Score;
-	GameController gameController;
-	
-	void Start ()
+    private IController IController;
+    string[] Tags = new string[] { "Player", "Enemy", "Bolt", "Boundary"};
+
+    void Awake()
     {
-        GameObject gameControllerObject = GameObject.FindWithTag ("GameController");
-        if (gameControllerObject != null)
+        IController = GameObject.Find("GameController").GetComponent<GameController>();
+    }
+
+    void Update()
+    {
+        
+    }
+
+    void PlayerCollision(GameObject gameObject)
+    {
+        if (IController.GetLife() == 0)
         {
-            gameController = gameControllerObject.GetComponent <GameController>();
+            IController.GameOver();
         }
-        if (gameController == null)
+        else
         {
-            Debug.Log ("Cannot find 'GameController' script");
+            IController.AddLife(1);
         }
     }
-	
+
+    void EnemyCollision(GameObject gameObject)
+    {
+        IController.AddScore(Score);
+        Destroy(gameObject);
+    }
+
+    void GenericCollision(GameObject gameObject)
+    {
+        Destroy(gameObject);
+    }
+
 	void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Boundary")
+
+        if (other.CompareTag(Tags[3]))
         {
             return;
         }
-		if (other.tag == "Player" || tag == "Player")
-        {
-            if (gameController.Life == 0) 
-			{
-				gameController.GameOver ();
-			} else 
-			{
-				gameController.SubtractLife (1);
-			}
 			
-        }
-		if (gameController.Life >= 0 && other.tag == "Player") 
-		{
-
-		} else 
-			{
-				Destroy(other.gameObject);
-			}
-
-		if (gameController.Life >= 0 && tag == "Player") 
-		{
-
-		} else 
-			{
-				Destroy(gameObject);
-			}
-		gameController.AddScore(Score);
+		for(int i=0; i<3; i++)
+ 	    {
+			if (gameObject.CompareTag(Tags[i]))
+ 	        {
+            	switch (i)
+         		{
+                	case 0:
+                    	PlayerCollision(gameObject);
+                 		break;
+                	case 1:
+                    	EnemyCollision(gameObject);
+                    	break;
+                 	case 2:
+                    	GenericCollision(gameObject);
+                    	break;
+      		    }
+       		}
+    	}
     }
 }
