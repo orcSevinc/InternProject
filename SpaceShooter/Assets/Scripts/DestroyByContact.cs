@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-
+//Idamageble interface TODO
 
 public class DestroyByContact : MonoBehaviour
 {
     public int Score;
     private IController IController;
-    string[] Tags = new string[] { "Player", "Enemy", "Bolt", "Boundary"};
+    string[] Tags = new string[] { "Player", "Enemy", "Bolt", "BoltCyan", "Boundary"};
 
-    void Awake()
+    void Start()
     {
         IController = GameObject.Find("GameController").GetComponent<GameController>();
     }
@@ -17,6 +17,17 @@ public class DestroyByContact : MonoBehaviour
     void Update()
     {
         
+    }
+
+    bool CollisionBetweenEnemies(GameObject gameObject, Collider other)
+    {
+        if (gameObject.CompareTag(Tags[1]) && other.CompareTag(Tags[2])) //Enemy & Bolt
+            return true;
+        if (gameObject.CompareTag(Tags[2]) && other.CompareTag(Tags[1])) //Bolt & Enemy
+            return true;
+        if (gameObject.CompareTag(Tags[1]) && other.CompareTag(Tags[1])) //Enemy & Enemy
+            return true;
+        return false;
     }
 
     void PlayerCollision(GameObject gameObject)
@@ -29,6 +40,7 @@ public class DestroyByContact : MonoBehaviour
         {
             IController.AddLife(1);
         }
+        Destroy(gameObject);
     }
 
     void EnemyCollision(GameObject gameObject)
@@ -45,12 +57,17 @@ public class DestroyByContact : MonoBehaviour
 	void OnTriggerEnter(Collider other)
     {
 
-        if (other.CompareTag(Tags[3]))
+        if (other.CompareTag(Tags[4])) //Check for Boundary
         {
             return;
         }
+
+        if (CollisionBetweenEnemies(this.gameObject, other)) 
+		{
+			return;
+		}
 			
-		for(int i=0; i<3; i++)
+		for(int i=0; i<Tags.Length-1; i++)
  	    {
 			if (gameObject.CompareTag(Tags[i]))
  	        {
@@ -63,6 +80,7 @@ public class DestroyByContact : MonoBehaviour
                     	EnemyCollision(gameObject);
                     	break;
                  	case 2:
+                    case 3:
                     	GenericCollision(gameObject);
                     	break;
       		    }

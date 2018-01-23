@@ -70,6 +70,12 @@ public class GameController : MonoBehaviour, IController
                 Restart = true;
                 break;
             }
+
+            if (GameObject.FindGameObjectWithTag("Player") == null)
+            {
+                Instantiate(player);
+                yield return new WaitForSeconds(spawnWait);
+            }
         }
     }
 
